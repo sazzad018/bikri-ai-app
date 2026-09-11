@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load unfold %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md">
+        {% component "unfold/components/card.html" with class="rounded-xl px-8 py-8" %}
+            <div class="flex flex-col gap-6">
+                <!-- Header -->
+                <div class="text-center">
+                    <span class="material-symbols-outlined text-4xl text-primary-600 mb-2">payments</span>
+                    <h2 class="text-xl font-bold text-neutral-900 dark:text-neutral-100">Manual Payment</h2>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Send money via bKash, then submit the transaction ID below</p>
+                </div>
+
+                <!-- Package Info -->
+                <div class="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 text-center">
+                    <div class="text-sm text-primary-700 dark:text-primary-300 font-medium">{{ package.title }}</div>
+                    <div class="text-3xl font-bold text-primary-600 mt-1">৳{{ amount }}</div>
+                    <div class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{{ package.credits }} Credits</div>
+                </div>
+
+                <!-- Step 1: Send Money -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold">1</span>
+                        <span class="font-semibold text-neutral-800 dark:text-neutral-200">Send ৳{{ amount }} to this bKash number</span>
+                    </div>
+                    <div class="flex items-center gap-3 bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4">
+                        <span class="material-symbols-outlined text-primary-600">phone_android</span>
+                        <span id="bkash-number" class="text-lg font-mono font-bold text-neutral-900 dark:text-neutral-100 flex-1">{{ number }}</span>
+                        <button 
+                            type="button" 
+                            onclick="copyNumber()" 
+                            id="copy-btn"
+                            class="btn btn-primary !py-1.5 !px-3 !text-sm flex items-center gap-1"
+                        >
+                            <span class="material-symbols-outlined text-sm" id="copy-icon">content_copy</span>
+                            <span id="copy-text">Copy</span>
+                        </button>
+                    </div>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                        Open your bKash app → Send Money → Enter the number above → Send exactly ৳{{ amount }}
+                    </p>
+                </div>
+
+                <!-- Step 2: Submit Transaction ID -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold">2</span>
+                        <span class="font-semibold text-neutral-800 dark:text-neutral-200">Submit your Transaction ID</span>
+                    </div>
+                    <form method="POST" action="{% url 'credit:submit_transaction_id' payment_attempt.id %}" class="flex flex-col gap-3">
+                        {% csrf_token %}
+                        <input 
+                            type="text" 
+                            name="transaction_id" 
+                            placeholder="e.g. TrxID: BIxxxxxxxxxx" 
+                            required
+                            class="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-4 py-3 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        >
+                        <button type="submit" class="btn btn-primary w-full !py-3 font-semibold">
+                            Submit for Verification
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Note -->
+                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                    <div class="flex items-start gap-2">
+                        <span class="material-symbols-outlined text-amber-600 text-sm mt-0.5">info</span>
+                        <p class="text-xs text-amber-700 dark:text-amber-300">
+                            After submission, our team will verify your transaction. Credits will be added to your account once verified. This usually takes a few minutes.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Back Link -->
+                <a href="{% url 'credit:buy_credit' %}" class="text-center text-sm text-neutral-500 hover:text-primary-600 transition-colors">
+                    ← Back to Packages
+                </a>
+            </div>
+        {% endcomponent %}
+    </div>
+</div>
+
+<script>
+function copyNumber() {
+    const number = document.getElementById('bkash-number').textContent.trim();
+    navigator.clipboard.writeText(number).then(() => {
+        const icon = document.getElementById('copy-icon');
+        const text = document.getElementById('copy-text');
+        icon.textContent = 'check';
+        text.textContent = 'Copied!';
+        setTimeout(() => {
+            icon.textContent = 'content_copy';
+            text.textContent = 'Copy';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "account/email/base_message.html" %}
+{% load account i18n %}
+
+{% block content %}
+<p>{% translate "You are receiving this notification because the following change was made to your account:" %}</p>
+
+<div style="background-color: #FFF7ED; border-left: 4px solid #FE8C01; padding: 15px; margin: 20px 0; color: #7C2D12; border-radius: 0 6px 6px 0;">
+    {% block notification_message %}
+    {% endblock notification_message%}
+</div>
+
+<p>{% translate "If you did not authorize this change, please follow our security protocols and review your account activity immediately." %}</p>
+
+<div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; font-size: 14px; margin-top: 20px; border: 1px solid #e2e8f0;">
+    <strong>{% translate "The change originated from:" %}</strong><br>
+    <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+        <li>{% translate "IP address:" %} {{ ip|default:"Unknown" }}</li>
+        <li>{% translate "Browser:" %} {{ user_agent|default:"Unknown" }}</li>
+        <li>{% translate "Date/Time:" %} {{ timestamp|default:"Unknown" }}</li>
+    </ul>
+</div>
+{% endblock content %}

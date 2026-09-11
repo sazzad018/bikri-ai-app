@@ -1,0 +1,16 @@
+{% load socialaccount %}
+
+{% load unfold %}
+<div class="flex items-center p-1 gap-3 mb-6 w-full">
+    {% provider_login_url 'google' as google_url %}
+    {% component "unfold/components/button.html" with href=google_url variant="default" class="flex-1 gap-3"  %}
+        {% include "core/icons/google.html" %} Continue with Google
+    {% endcomponent %}
+</div>
+
+
+<div class="relative flex items-center gap-3 mb-6">
+    <div class="flex-1 border-t border-gray-200"></div>
+    <span class="text-xs text-gray-400 font-medium uppercase tracking-wide">or</span>
+    <div class="flex-1 border-t border-gray-200"></div>
+</div>

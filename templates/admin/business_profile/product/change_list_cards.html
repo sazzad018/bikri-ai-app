@@ -1,0 +1,114 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static unfold %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectAll = document.getElementById('action-toggle');
+        var actionsEls = document.querySelectorAll('input.action-select');
+        var counter = document.querySelector('span.action-counter');
+
+        function updateCounter() {
+            var selected = Array.prototype.filter.call(actionsEls, function (el) {
+                return el.checked;
+            }).length;
+
+            if (counter) {
+                var total = counter.dataset.actionsIcnt;
+                counter.textContent = selected + ' of ' + total + ' selected';
+            }
+            if (selectAll) {
+                selectAll.checked = actionsEls.length > 0 && selected === actionsEls.length;
+            }
+        }
+
+        if (selectAll) {
+            selectAll.addEventListener('click', function () {
+                actionsEls.forEach(function (el) { el.checked = selectAll.checked; });
+                updateCounter();
+            });
+        }
+
+        actionsEls.forEach(function (el) {
+            el.addEventListener('change', updateCounter);
+        });
+
+        updateCounter();
+    });
+    </script>
+{% endblock %}
+
+{% block result_list %}
+    {% include "unfold/helpers/change_list_actions.html" %}
+
+    {% if cl.result_list %}
+        <div class="result-list-cards flex flex-col gap-4">
+            {% if action_form %}
+                <div class="flex items-center mb-4 px-4 gap-2">
+                    <input type="checkbox" id="action-toggle" class="checkbox after:material-symbols-outlined action-toggle">
+                    <label for="action-toggle" class="text-sm font-medium text-font-important-light dark:text-font-important-dark select-none cursor-pointer">
+                        {% trans "Select all" %}
+                    </label>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16">
+                {% for product in cl.result_list %}
+                    {% component "unfold/components/card.html" with size="md" class="group h-full relative" footer=card_footer %}
+                        <div class="relative aspect-square bg-base-100 dark:bg-base-950 overflow-hidden border-b border-base-200 dark:border-base-800 -mx-3 -mt-3 mb-3">
+                            {% if action_form %}
+                                <div class="absolute top-3 left-3 z-20 shadow">
+                                    <input type="checkbox" name="_selected_action" value="{{ product.pk }}" class="checkbox after:material-symbols-outlined action-select">
+                                </div>
+                            {% endif %}
+                            
+                            <a href="{% url 'admin:business_profile_product_change' product.pk %}" class="w-full h-full block">
+                                {% if product.get_image_url %}
+                                    <img src="{{ product.get_image_url }}" alt="{{ product.title }}" class="w-full h-full object-cover object-center">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center bg-base-100 dark:bg-base-950 text-base-400 dark:text-base-600">
+                                        <span class="material-symbols-outlined text-4xl">image</span>
+                                    </div>
+                                {% endif %}
+                            </a>
+
+
+                            <div class="absolute top-3 right-3 z-20">
+                                {% if not product.is_active %}
+                                    <div class="bg-amber-200/80 w-7 h-7 rounded-full flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-amber-600">visibility_off</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col grow">
+                            <div class="flex items-center gap-1 text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider mb-3 truncate">
+                                <span class="material-symbols-outlined text-xs! font-semibold">storefront</span>
+                                <a href="{% url 'admin:business_profile_businessprofile_change' product.business_profile.pk %}" class="hover:underline">
+                                    {{ product.business_profile.name }}
+                                </a>
+                            </div>
+
+                            <h3 class="text-sm font-semibold text-font-important-light dark:text-font-important-dark mb-1 line-clamp-1">
+                                <a href="{% url 'admin:business_profile_product_change' product.pk %}" class="hover:underline">
+                                    {{ product.title }}
+                                </a>
+                            </h3>
+                            <p class="text-sm text-font-secondary-light dark:text-font-secondary-dark line-clamp-1">
+                                <span class="font-semibold text-gray-800 dark:text-gray-300 mr-1">  ৳ {{ product.price|floatformat:2 }} </span>
+                                {{ product.description }}
+                            </p>
+
+                            
+                        </div>
+                    {% endcomponent %}
+                {% endfor %}
+            </div>
+        </div>
+        
+    {% else %}
+        {% include 'unfold/helpers/empty_results.html' %}
+    {% endif %}
+{% endblock %}

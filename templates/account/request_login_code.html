@@ -1,0 +1,20 @@
+{% extends 'account/base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2 class="text-2xl font-medium">{% translate "Send me a sign-in code" %}</h2>
+        <p class="text-sm text-gray-500 text-center">{% blocktranslate %}You will receive a special code for a password-free sign-in.{% endblocktranslate %}</p>
+    </div>
+
+    <form class="flex flex-col gap-4" method="post" action="{% url 'account_request_login_code' %}">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+    
+    <div class="mt-8 text-center pt-4 border-t">
+        <a href="{% url 'account_login' %}" class="link text-sm">{% translate "Other sign-in options" %}</a>
+    </div>
+</div>
+{% endblock content %}

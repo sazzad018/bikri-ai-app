@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block extra_head %}{% endblock extra_head %}
+{% block body %}
+    <header class="flex items-center justify-between px-6 py-4">
+        {% include 'brand.html' %}
+        <div></div>
+    </header>
+    <main class="flex-1 flex items-center justify-center">
+        <div class="w-full max-w-sm px-6 py-8">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+{% endblock %}
+    

@@ -1,0 +1,30 @@
+{% extends 'account/base.html' %}
+{% load crispy_forms_tags socialaccount %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2 class="text-xl font-medium">Signup for an account</h2>
+        <p class="text-sm text-gray-500">Follow the method to signup</p>
+    </div>
+
+    {% include 'account/partials/social_login_links.html' %}
+
+    <form action="{% url 'account_signup' %}" method="post" class="flex flex-col gap-3">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="callout callout--danger mb-0">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        {% crispy form %}
+
+        <div class="text-sm text-gray-500 text-center mt-8">
+            <p>Already have an account? <a href="{% url 'account_login' %}" class="link">Login</a></p>
+            <p class="mt-5 text-xs">By signing up, you agree to our <a href="/i/terms-of-service/" class="link">Terms of Service</a></p>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

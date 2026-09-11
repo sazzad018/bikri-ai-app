@@ -1,0 +1,26 @@
+{% extends 'account/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2 class="text-2xl font-medium">{% trans "Confirm Email Address" %}</h2>
+    </div>
+
+    <div class="flex flex-col gap-4 text-center">
+        {% if confirmation %}
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                {% csrf_token %}
+                <p class="mb-6 text-gray-600">
+                    {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}" class="link">{{ email }}</a> is an email address for user {{ user_display }}.{% endblocktrans %}
+                </p>
+                <button class="btn btn-primary" type="submit">{% trans 'Confirm' %}</button>
+            </form>
+        {% else %}
+            <p class="text-gray-600">
+                {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}" class="link">issue a new email confirmation request</a>.{% endblocktrans %}
+            </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

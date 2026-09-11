@@ -1,0 +1,16 @@
+{% extends 'account/base.html' %}
+{% load crispy_forms_tags i18n %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2>{% translate "Confirm Access" %}</h2>
+        <p class="text-sm text-gray-500 text-center">{% blocktranslate %}To continue, please re-enter your password to confirm it's you.{% endblocktranslate %}</p>
+    </div>
+
+    <form class="flex flex-col gap-4" method="post" action="{% url 'account_reauthenticate' %}">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+</div>
+{% endblock content %}

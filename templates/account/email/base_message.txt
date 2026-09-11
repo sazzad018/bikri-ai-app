@@ -1,0 +1,11 @@
+{% load i18n account %}{% autoescape off %}
+{% blocktranslate with site_name=current_site.name %}Hello from {{ site_name }},{% endblocktranslate %}
+
+{% block content %}{% endblock content %}
+
+{% translate "Best regards," %}
+{% blocktranslate with site_name=current_site.name site_domain=current_site.domain %}The {{ site_name }} Team
+{{ site_domain }}{% endblocktranslate %}
+--------------------------------------------------------------------------------
+{% translate "This is an automated message. Please do not reply to this email." %}
+{% endautoescape %}

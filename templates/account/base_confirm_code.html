@@ -1,0 +1,50 @@
+{% extends 'account/base.html' %}
+{% load i18n crispy_forms_tags %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2 class="text-center text-2xl font-medium">{% block title %}{% endblock title %}</h2>
+        <p class="text-sm text-gray-500 text-center mt-2">
+            {% blocktranslate %}We've sent a code to {% endblocktranslate %}{% block recipient %}{% endblock %}{% blocktranslate %}. The code expires shortly, so please enter it soon.{% endblocktranslate %}
+        </p>
+        <div class="hidden">{% block action_url %}{% endblock %}</div>
+    </div>
+
+    <form class="flex flex-col gap-4" method="post" action="">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+    
+    <div class="flex flex-col gap-3 mt-2">
+        {% if can_resend %}
+            <form id="resend" method="post" action="">
+                <input type="hidden" name="action" value="resend">
+                {{ redirect_field }}
+                {% csrf_token %}
+                <button class="w-full btn" variant="text" type="submit">{% translate "Resend" %}</button>
+            </form>
+        {% endif %}
+        
+        {% if cancel_url %}
+            <button href="{{ cancel_url }}" class="w-full btn" variant="text">{% translate "Cancel" %}</button>
+        {% else %}
+            <form id="logout-from-stage" method="post" action="{% url 'account_logout' %}">
+                <input type="hidden" name="next" value="{% url 'account_login' %}">
+                {% csrf_token %}
+                <button class="w-full btn" variant="text" type="submit">{% translate "Cancel" %}</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% if can_change %}
+    <div class="mt-8 border-t pt-6">
+        <h3 class="mb-4 text-center">{% block change_title %}{% translate "Change Address" %}{% endblock %}</h3>
+        <form method="post" action="" class="flex flex-col gap-4">
+            {% csrf_token %}
+            {% crispy change_form %}
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

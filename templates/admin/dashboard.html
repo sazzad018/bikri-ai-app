@@ -1,0 +1,147 @@
+
+{% if user.business_profiles.all %}
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <div class="p-2 flex flex-col gap-6">
+      <form target="" class="flex items-center gap-3 max-w-sm">
+          {{ form.business_profile }}
+          {{ form.time_range }}
+      </form>
+      <div class="border border-neutral-200 rounded-lg bg-white shadow-xs dark:bg-neutral-800 dark:border-neutral-700">
+          <div class="grid grid-cols-1 md:grid-cols-4 md:divide-x md:divide-neutral-200">
+              {% include "core/partials/stat.html" with icon="mark_chat_unread" title="Incoming messages" value=incoming_messages %}
+              {% include "core/partials/stat.html" with icon="mark_chat_read" title="Outgoing messages" value=outgoing_messages %}
+              {% include "core/partials/stat.html" with icon="forum" title="Conversations" value=conversations_count %}
+              {% include "core/partials/stat.html" with icon="receipt_long" title="Orders" value=orders_count %}
+          </div>
+
+      </div>
+      <div class="grid sm:grid-cols-1 md:grid-cols-3 border border-neutral-200 rounded-lg bg-white shadow-xs dark:bg-neutral-800 dark:border-neutral-700">
+          <div id="message-chart" class="pt-6 px-3 pb-2 md:col-span-2"></div>
+          <script>
+              var options = {
+                  series: [{
+                  name: 'Incoming Messages',
+                  data: {{ chart_incoming|safe }}
+                  }, {
+                  name: 'Outgoing Messages',
+                  data: {{ chart_outgoing|safe }}
+                  }, {
+                  name: 'Conversations',
+                  data: {{ chart_conversations|safe }}
+                  }, {
+                  name: 'Orders',
+                  data: {{ chart_orders|safe }}
+                  }],
+                  chart: {
+                  type: 'bar',
+                  height: 350
+                  },
+                  plotOptions: {
+                  bar: {
+                      horizontal: false,
+                      columnWidth: '55%',
+                      borderRadius: 5,
+                      borderRadiusApplication: 'end'
+                  },
+                  },
+                  dataLabels: {
+                  enabled: false
+                  },
+                  stroke: {
+                  show: true,
+                  width: 2,
+                  colors: ['transparent']
+                  },
+                  xaxis: {
+                  categories: {{ chart_day_labels|safe }},
+                  },
+                  fill: {
+                  opacity: 1
+                  },
+              };
+
+              var chart = new ApexCharts(document.querySelector("#message-chart"), options);
+              chart.render();
+          </script>
+
+          <div id="day-engagement-chart" class="pt-6 px-3 pb-2"></div>
+          <script>
+              var options = {
+            series: [{
+              name: 'Engagement',
+              data: {{ chart_engagement|safe }}
+            }],
+            chart: {
+            type: 'bar',
+            height: 350
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              borderRadiusApplication: 'end',
+              {% comment %} horizontal: true, {% endcomment %}
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          tooltip: {
+            y: {
+              formatter: function (val) {
+                return val + " %"
+              }
+            }
+          },
+          xaxis: {
+            categories: {{ chart_hour_labels|safe }},
+          }
+          };
+
+          var chart = new ApexCharts(document.querySelector("#day-engagement-chart"), options);
+          chart.render();
+          </script>
+
+
+      </div>
+  </div>
+{% else %}
+  <div class="flex flex-col gap-6 p-6 min-h-96 items-center justify-center">
+    <h2 class="text-2xl font-mediumn text-neutral-900">Welcome, {{ user.get_full_name }}</h2>
+    <p>Connect your first Facebook page or WhatsApp account to get started</p>
+    {% include "core/partials/business_profile_oauth_links.html" %}
+  </div>
+{% endif %}
+
+{% if popup %}
+<div
+  x-data="{ openModal: true }"
+  x-on:keydown.escape.window="openModal = false;">
+  <div x-show="openModal" class="bg-white/30 backdrop-blur-xs bottom-0 fixed left-0 right-0 top-0 z-100"></div>
+
+  <!-- Modal window styling-->
+  <div x-show="openModal" x-cloak x-transition class="fixed m-4 inset-0 overflow-auto z-101 lg:py-24">
+      <div class="container max-w-xl max-h-[75vh] min-h-[50vh] mx-auto my-auto absolute top-0 right-0 bottom-0 left-0 shadow-xl rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+            >
+          <div id="modal-content" class="relative bg-white rounded-lg flex flex-col h-full">
+            <div class="prose flex-1 p-6 lg:p-8 overflow-auto w-full">
+            {{ popup.content|safe }}
+
+            </div>
+
+            <div class="flex gap-3 p-4 flex-row-reverse bg-white">
+              {% for button in popup.buttons %}
+                {% if button.url %}
+                  <a href="{{ button.url }}" {% if button.action == 'url_new_tab' %}target="_blank"{% endif %} class="btn btn-{{ button.variant }}">{{ button.label }}</a>
+                {% else %}
+                  <button type="button" class="btn btn-{{ button.variant }}" {% if button.action == 'close' %} @click="openModal = false" {% endif %}>{{ button.label }}</button>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+          </div>
+          
+      </div>
+  </div>
+</div>
+{% endif %}

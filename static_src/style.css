@@ -1,0 +1,203 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+    /* Base (OKLCH - Neutral/Blue-ish Tints) */
+    --color-base-50: oklch(98.5% .002 247.839);
+    --color-base-100: oklch(96.7% .003 264.542);
+    --color-base-200: oklch(92.8% .006 264.531);
+    --color-base-300: oklch(87.2% .01 258.338);
+    --color-base-400: oklch(70.7% .022 261.325);
+    --color-base-500: oklch(55.1% .027 264.364);
+    --color-base-600: oklch(44.6% .03 256.802);
+    --color-base-700: oklch(37.3% .034 259.733);
+    --color-base-800: oklch(27.8% .033 256.848);
+    --color-base-900: oklch(21% .034 264.665);
+    --color-base-950: oklch(13% .028 261.692);
+
+    /* Primary (HSL - Orange) */
+    --color-primary-50: hsl(25, 99%, 95%);
+    --color-primary-100: hsl(25, 99%, 90%);
+    --color-primary-200: hsl(25, 99%, 80%);
+    --color-primary-300: hsl(25, 99%, 70%);
+    --color-primary-400: hsl(25, 99%, 60%);
+    --color-primary-500: hsl(25, 99%, 50%);
+    --color-primary-600: hsl(25, 99%, 45%);
+    --color-primary-700: hsl(25, 99%, 30%);
+    --color-primary-800: hsl(25, 99%, 20%);
+    --color-primary-900: hsl(25, 99%, 10%);
+    --color-primary-950: hsl(25, 99%, 5%);
+
+
+    /* Semantic Font Colors (Light Mode Default) */
+    --color-font-subtle-light: var(--color-base-500);
+    --color-font-default-light: var(--color-base-600);
+    --color-font-important-light: var(--color-base-900);
+    --color-font-subtle-dark: var(--color-base-400);
+    --color-font-default-dark: var(--color-base-300);
+    --color-font-important-dark: var(--color-base-100);
+
+    --radius-small: 0.25rem;
+    --radius-default: 0.375rem;
+    --radius-large: 0.5rem;
+}
+
+body {
+    font-family: 'Lexend', 'Hind Siliguri', sans-serif;
+}
+
+.ck-content, .markdown-body {
+    @apply prose;
+}
+.ck-content {
+    @apply max-w-4xl;
+}
+
+hr {
+    border-color: var(--color-gray-200);
+}
+
+:not(:defined) {
+    visibility: hidden;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+#nav-sidebar {
+    @apply max-h-dvh! overflow-y-auto! overflow-x-hidden!;
+}
+
+#nav-sidebar-inner {
+    @apply max-h-[700px]!;
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+label {
+    @apply text-sm font-medium text-font-important-light;
+}
+
+fieldset {
+    @apply w-full min-w-0 overflow-hidden;
+}
+
+.heading {
+    @apply text-xl md:text-2xl lg:text-3xl font-bold text-neutral-900 mb-4;
+}
+
+.link {
+    @apply text-primary-500 hover:underline;
+}
+
+@utility input {
+    @apply border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl;
+}
+
+@utility btn {
+    @apply font-medium inline-flex items-center gap-1 relative rounded-default justify-center whitespace-nowrap cursor-pointer px-3 py-2 bg-white border border-base-200 text-base-700 shadow-xs transition-all duration-200;
+}
+
+.btn-primary {
+    @apply bg-primary-600 border-transparent shadow-none text-white hover:bg-primary-600/80;
+}
+
+.btn-danger {
+    @apply bg-red-600 border-transparent shadow-none text-white hover:bg-red-600/80;
+}
+
+.btn-success {
+    @apply bg-green-600 border-transparent shadow-none text-white hover:bg-green-600/80;
+}
+
+.btn-info {
+    @apply bg-blue-600 border-transparent shadow-none text-white hover:bg-blue-600/80;
+}
+
+.btn-warning {
+    @apply bg-yellow-600 border-transparent shadow-none text-white hover:bg-yellow-600/80;
+}
+
+.btn-sm {
+    @apply text-sm py-1.5 px-3;
+}
+
+.btn-ghost {
+    @apply bg-transparent border-transparent shadow-none text-neutral-800 hover:text-primary-600 hover:bg-primary-50;
+}
+
+.badge {
+    @apply inline-flex items-center text-sm text-base-700 dark:text-base-400 py-1 px-3 rounded-full bg-primary-50 text-nowrap;
+}
+
+.callout {
+    @apply bg-base-100 text-font-default-light px-4 py-3 rounded-default;
+}
+
+.callout-danger {
+    @apply bg-red-200 text-red-600;
+}
+
+.line-behind {
+    position: relative;
+    display: inline-block;
+}
+
+.line-behind::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 50%;
+    height: 1px;
+    width: 100%;
+    background: var(--color-neutral-200);
+    z-index: 0;
+}
+
+.checkbox {
+    @apply appearance-none bg-white block border border-base-300 h-4 min-w-4 relative rounded-[4px] shadow-xs w-4 dark:bg-base-900 dark:border-base-700 dark:checked:after:text-white after:absolute after:content-['check\_small'] after:flex! after:h-4 after:items-center after:justify-center after:leading-none after:-ml-px after:-mt-px after:text-white after:w-4 dark:after:text-transparent checked:bg-primary-600 dark:checked:bg-primary-600 checked:border-primary-600 dark:checked:border-primary-600;
+}
+
+input[type=checkbox]:checked {
+    @apply bg-primary-500!;
+}
+
+.msg-whatsapp {
+  @apply px-3 py-1.5 text-[14.2px] w-auto leading-4.5 whitespace-nowrap rounded-[8px] shadow-[0_1px_0.5px_rgba(11,27,33,0.11)] bg-white text-[#111b21] rounded-tl-none dark:bg-[#202c33] dark:text-[#e9edef];
+}
+.msg-whatsapp::before {
+    /*  */
+    content: '';
+    @apply absolute top-0 left-0 -ml-[7px] w-6 h-6 bg-white;
+    clip-path: path("M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z");
+}
+
+.msg-whatsapp-primary {
+  @apply bg-[#d9fdd3] text-[#111b21] rounded-tr-none dark:bg-[#005c4b]  dark:text-[#e9edef] self-end ml-auto;
+}
+
+.msg-messenger {
+  @apply px-3.5 py-2 text-[15px] leading-normal rounded-[18px] whitespace-nowrap bg-white shadow-xs text-[#050505] rounded-bl-[4px] dark:bg-[#2f3031] dark:text-[#e4e6eb];
+}
+
+.msg-messenger-primary {
+  @apply bg-[#0084ff] text-white rounded-br-[4px] dark:bg-[#0078ff] self-end ml-auto;
+}
+
+.django-jsonform-container input[type="text"],
+.django-jsonform-container input[type="number"],
+.django-jsonform-container input[type="url"],
+.django-jsonform-container textarea,
+.django-jsonform-container select {
+    @apply input max-w-xl w-full;
+}
+.django-jsonform-container input[type="checkbox"] {
+    @apply mr-2;
+}
+.django-jsonform-container .rjf-error-text {
+    @apply text-xs text-red-600;
+}

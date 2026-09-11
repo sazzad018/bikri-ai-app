@@ -1,0 +1,14 @@
+{% extends 'account/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2>{% trans "Account Inactive" %}</h2>
+    </div>
+
+    <div class="text-gray-600">
+        <p>{% trans "This account is inactive." %}</p>
+    </div>
+</div>
+{% endblock content %}

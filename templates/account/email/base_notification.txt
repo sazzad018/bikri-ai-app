@@ -1,0 +1,15 @@
+{% extends "account/email/base_message.txt" %}
+{% load account i18n %}
+
+{% block content %}{% autoescape off %}
+{% translate "You are receiving this notification because the following change was made to your account:" %}
+
+{% block notification_message %}
+{% endblock notification_message%}
+
+{% translate "If you did not authorize this change, please follow our security protocols and review your account activity immediately." %}
+{% translate "The change originated from:" %}
+- {% translate "IP address:" %} {{ ip|default:"Unknown" }}
+- {% translate "Browser:" %} {{ user_agent|default:"Unknown" }}
+- {% translate "Date/Time:" %} {{ timestamp|default:"Unknown" }}
+{% endautoescape %}{% endblock content %}

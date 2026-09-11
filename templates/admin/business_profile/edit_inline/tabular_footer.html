@@ -1,0 +1,73 @@
+<tfoot class="form-actions">
+    <tr>
+        <td colspan="100%">
+            <div
+                class="hidden form-actions border-t border-base-200 flex flex-row justify-between p-3 dark:border-base-800 items-center gap-4 has-[.add-row:not(.hidden)]:flex has-[.inline-pagination]:flex group-[.empty]/formset-parent:!border-t-0 group-[.empty]/formset-nested:!border-t-0">
+                <div class="flex items-center gap-4 flex-wrap" x-data="{
+                    handleFiles(event) {
+                        const files = event.target.files;
+                        const container = event.target.closest('.tabular');
+                        const addRowBtn = container.querySelector('.add-row');
+                        
+                        if (!addRowBtn) return;
+                        
+                        for (const file of files) {
+                            addRowBtn.click();
+                            
+                            const fileInputs = Array.from(container.querySelectorAll('.form-row input[type=\'file\']'));
+                            const activeInputs = fileInputs.filter(input => !input.closest('.empty-form'));
+                            
+                            const targetInput = activeInputs[activeInputs.length - 1];
+                            
+                            if (targetInput) {
+                                const dt = new DataTransfer();
+                                dt.items.add(file);
+                                targetInput.files = dt.files;
+                                
+                                const td = targetInput.closest('td');
+                                if (td) {
+                                    const placeholder = td.querySelector('input[type=&quot;text&quot;]');
+                                    if (placeholder) {
+                                        placeholder.value = file.name;
+                                        placeholder.setAttribute('value', file.name);
+                                    }
+                                }
+                                
+                                const row = targetInput.closest('.form-row');
+                                if (row && file.type.startsWith('image/')) {
+                                    const previewTd = row.querySelector('.field-preview');
+                                    if (previewTd) {
+                                        const objectUrl = URL.createObjectURL(file);
+                                        previewTd.innerHTML = `
+                                            <div class=&quot;flex flex-col items-center  gap-1 mt-2 mb-2 ml-4&quot;>
+                                                <img src=&quot;${objectUrl}&quot; class=&quot;block rounded-default object-contain&quot; style=&quot;max-width: 28px; max-height: 28px; border-radius: 6px;&quot; />
+                                                <span class=&quot;text-[10px] leading-tight&quot;>Unsaved</span>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                                
+                                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+                        event.target.value = '';
+                    }
+                }">
+                    {% include "unfold/helpers/edit_inline/inline_add.html" %}
+
+                    <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles($event)" />
+                    <a href="#"
+                        class="flex items-center font-medium -my-1.5 -ml-1.5 text-sm text-primary-600 dark:text-primary-500"
+                        @click="$refs.fileInput.click()">
+                        <span class="flex items-center justify-center h-[38px] w-[38px]">
+                            <span
+                                class="material-symbols-outlined bg-primary-600 flex items-center justify-center rounded-full text-base text-white h-[18px] w-[18px]">file_upload</span>
+                        </span>
+                        <span>Select multiple files</span>
+                    </a>
+                </div>
+                {% include "unfold/helpers/pagination_inline.html" %}
+            </div>
+        </td>
+    </tr>
+</tfoot>

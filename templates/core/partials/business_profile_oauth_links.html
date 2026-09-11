@@ -1,0 +1,11 @@
+{% load unfold %}
+<div class="flex items-center p-1 gap-2">
+    {% url "business_profile:facebook_oauth_init" as facebook_url %}
+    {% component "unfold/components/button.html" with href=facebook_url variant="default"  %}
+        {% include "core/icons/facebook.html" %} Facebook
+    {% endcomponent %}
+    {% url "business_profile:whatsapp_oauth_init" as whatsapp_url %}
+    {% component "unfold/components/button.html" with href=whatsapp_url variant="default"  %}
+        {% include "core/icons/whatsapp.html" %} Whatsapp
+    {% endcomponent %}
+</div>

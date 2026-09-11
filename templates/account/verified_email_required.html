@@ -1,0 +1,22 @@
+{% extends 'account/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="w-full py-6">
+    <div class="flex flex-col items-center gap-2 mb-8">
+        <h2 class="text-2xl font-medium">{% trans "Verify Your Email Address" %}</h2>
+    </div>
+
+    <div class="text-gray-600">
+        <p>
+            {% blocktrans %}This part of the site requires us to verify that you are who you claim to be. For this purpose, we require that you verify ownership of your email address.{% endblocktrans %}
+        </p>
+        <p class="mt-2">
+            {% blocktrans %}We have sent an email to you for verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder.{% endblocktrans %}
+        </p>
+        <p class="mt-4 text-sm">
+            {% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}" class="link">change your email address</a> or <a href="{{ logout_url }}" class="link">log out</a>.{% endblocktrans %}
+        </p>
+    </div>
+</div>
+{% endblock content %}

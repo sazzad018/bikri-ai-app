@@ -1,0 +1,30 @@
+{% extends "account/email/base_message.html" %}
+{% load i18n %}
+
+{% block content %}
+<p>{% blocktranslate %}You are receiving this email because you, or someone else, tried to access an account with email <strong>{{ email }}</strong>. However, we do not have any record of such an account in our database.{% endblocktranslate %}</p>
+
+<p>{% blocktranslate %}If it was you, you can sign up for an account using the link below.{% endblocktranslate %}</p>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ signup_url }}" style="
+        background: #FE8C01;
+        border: none;
+        border-radius: 6px;
+        color: #ffffff;
+        cursor: pointer;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 12px 30px;
+        text-decoration: none;
+        display: inline-block;
+    ">
+        {% translate "Sign Up" %}
+    </a>
+</div>
+
+<p style="color: #64748b; font-size: 14px;">
+    {% blocktranslate %}This mail can be safely ignored if you did not initiate this action.{% endblocktranslate %}
+</p>
+{% endblock content %}

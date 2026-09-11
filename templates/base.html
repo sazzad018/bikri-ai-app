@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Production SEO Tags -->
+    <title>{% block title %}Cholbe AI{% endblock title %}</title>
+    <meta name="description" content="{% block meta_description %}Cholbe AI helps scale and automate your business using intelligent AI workflows, automated chat agents, and seamless integrations.{% endblock meta_description %}">
+    <meta name="keywords" content="{% block meta_keywords %}Cholbe AI{% endblock meta_keywords %}">
+    <meta name="robots" content="index,follow">
+
+    <!-- Open Graph / Social sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Cholbe AI - Scale Your Business with AI{% endblock og_title %}">
+    <meta property="og:description" content="{% block og_description %}Automate chats, business workflows, and scale operations easily.{% endblock og_description %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'img/logo_icon.svg' %}{% endblock og_image %}">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/logo_icon.svg' %}">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'unfold/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/build.css' %}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend&family=Hind+Siliguri&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <!-- AlpineJS -->
+     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"></script>
+
+
+    {% if GOOGLE_TAG_MANAGER_ID %}
+    <!-- Google Tag Manager -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        {% if gtm_events %}
+            {% for event_json in gtm_events %}
+                window.dataLayer.push({{ event_json|safe }});
+            {% endfor %}
+        {% endif %}
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ GOOGLE_TAG_MANAGER_ID }}');</script>
+    <!-- End Google Tag Manager -->
+    {% endif %}
+
+    <!-- Extra head -->
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+
+<!-- Production ready structure + global CSRF token injection for HTMX AJAX queries -->
+<body 
+    class="flex flex-col min-h-screen mx-auto bg-white" 
+    x-data="{drawerOpen: false}"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+>
+    {% if GOOGLE_TAG_MANAGER_ID %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ GOOGLE_TAG_MANAGER_ID }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    {% endif %}
+    
+    {% block body %}
+    {% endblock body %}
+
+    <!-- Script extensions hook for child pages -->
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

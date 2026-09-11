@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  },
+  "scripts": {
+    "watch": "tailwindcss -i static_src/style.css -o static/css/build.css --watch",
+    "build": "tailwindcss -i static_src/style.css -o static/css/build.css --minify",
+    "dev": "npm run watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19"
+  }
+}

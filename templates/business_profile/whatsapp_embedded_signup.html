@@ -1,0 +1,173 @@
+{% extends 'account/base.html' %}
+{% load crispy_forms_tags static i18n %}
+
+{% block extra_head %}
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center gap-6 px-4 py-12 max-w-lg mx-auto">
+    <div class="text-center">
+        <h1 class="text-xl font-semibold text-neutral-800 dark:text-neutral-100">
+            {% trans "Connect WhatsApp Business" %}
+        </h1>
+        <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+            {% trans "Use your existing WhatsApp Business app number or register a new Cloud API number." %}
+        </p>
+    </div>
+
+    <div id="signup-status" class="hidden text-sm text-center"></div>
+
+    <button
+        id="launch-whatsapp-signup"
+        type="button"
+        class="btn py-3 px-4 gap-4 my-4"
+    >
+        {% include "core/icons/whatsapp.html" with size="28" %}
+        {% trans "Connect with WhatsApp" %}
+    </button>
+
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 text-center">
+        {% trans "Coexistence lets you keep using the WhatsApp Business app while Cholbe AI handles automated replies via the Cloud API." %}
+    </p>
+</div>
+
+<script>
+(function () {
+    const appId = "{{ facebook_app_id|escapejs }}";
+    const configId = "{{ config_id|escapejs }}";
+    const graphApiVersion = "{{ graph_api_version|escapejs }}";
+    const callbackUrl = "{{ callback_url|escapejs }}";
+    const state = "{{ state|escapejs }}";
+    const redirectUrl = "{{ redirect_url|escapejs }}";
+    const csrfToken = "{{ csrf_token|escapejs }}";
+
+    const statusEl = document.getElementById("signup-status");
+    const launchBtn = document.getElementById("launch-whatsapp-signup");
+
+    let sessionData = null;
+    let sdkReady = false;
+
+    function setStatus(message, isError) {
+        statusEl.textContent = message;
+        statusEl.classList.remove("hidden", "text-red-600", "text-neutral-600");
+        statusEl.classList.add(isError ? "text-red-600" : "text-neutral-600");
+    }
+
+    function setLoading(loading) {
+        launchBtn.disabled = loading;
+        if (loading) {
+            launchBtn.setAttribute("aria-busy", "true");
+        } else {
+            launchBtn.removeAttribute("aria-busy");
+        }
+    }
+
+    async function waitForSessionData(maxAttempts) {
+        maxAttempts = maxAttempts || 20;
+        for (let i = 0; i < maxAttempts; i++) {
+            if (sessionData && sessionData.phone_number_id && sessionData.waba_id) {
+                return sessionData;
+            }
+            await new Promise(function (resolve) { setTimeout(resolve, 100); });
+        }
+        return sessionData;
+    }
+
+    async function sendToServer(code) {
+        setLoading(true);
+        setStatus("{% trans 'Finalizing connection...'|escapejs %}");
+
+        await waitForSessionData();
+
+        const response = await fetch(callbackUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            credentials: "same-origin",
+            body: JSON.stringify({
+                code: code,
+                state: state,
+                session_data: sessionData,
+            }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            setLoading(false);
+            setStatus(data.error || "{% trans 'Connection failed. Please try again.'|escapejs %}", true);
+            return;
+        }
+
+        window.location.href = data.redirect_url || redirectUrl;
+    }
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: appId,
+            autoLogAppEvents: true,
+            xfbml: true,
+            version: graphApiVersion,
+        });
+        sdkReady = true;
+    };
+
+    window.addEventListener("message", function (event) {
+        if (!event.origin.endsWith("facebook.com")) {
+            return;
+        }
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === "WA_EMBEDDED_SIGNUP") {
+                sessionData = {
+                    event: data.event,
+                    phone_number_id: data.data && data.data.phone_number_id,
+                    waba_id: data.data && data.data.waba_id,
+                    business_id: data.data && data.data.business_id,
+                    data: data.data,
+                };
+            }
+        } catch (_) {
+            // Non-JSON messages from Facebook are ignored.
+        }
+    });
+
+    function fbLoginCallback(response) {
+        if (response.authResponse && response.authResponse.code) {
+            sendToServer(response.authResponse.code);
+            return;
+        }
+        setLoading(false);
+        if (response.status === "not_authorized") {
+            setStatus("{% trans 'Permission was not granted. Please try again.'|escapejs %}", true);
+        } else {
+            setStatus("{% trans 'Signup was cancelled.'|escapejs %}", true);
+        }
+    }
+
+    launchBtn.addEventListener("click", function () {
+        if (!sdkReady || typeof FB === "undefined") {
+            setStatus("{% trans 'Facebook SDK is still loading. Please wait a moment.'|escapejs %}", true);
+            return;
+        }
+        sessionData = null;
+        setLoading(true);
+        setStatus("{% trans 'Opening WhatsApp signup...'|escapejs %}");
+
+        FB.login(fbLoginCallback, {
+            config_id: configId,
+            response_type: "code",
+            override_default_response_type: true,
+            extras: {
+                setup: {},
+                featureType: "whatsapp_business_app_onboarding",
+                sessionInfoVersion: "3",
+            },
+        });
+    });
+})();
+</script>
+{% endblock %}

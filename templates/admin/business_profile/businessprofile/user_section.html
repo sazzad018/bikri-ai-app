@@ -1,0 +1,37 @@
+<div class="border border-base-200 rounded-default dark:border-base-800 overflow-hidden bg-white">
+    <table class="block border-spacing-none border-separate w-full lg:table">
+        <thead class="text-font-important-light dark:text-font-important-dark ">
+            <tr class="bg-base-50 dark:bg-base-900">
+                <th class="align-middle border-b border-base-200 font-semibold py-2 text-left whitespace-nowrap hidden px-3 lg:table-cell dark:border-base-800 dark:bg-white/[.02] ">
+                    User Name
+                </th>
+                <th class="align-middle border-b border-base-200 font-semibold py-2 text-left whitespace-nowrap hidden px-3 lg:table-cell dark:border-base-800 dark:bg-white/[.02] ">
+                    Email
+                </th>
+                <th class="align-middle border-b border-base-200 font-semibold py-2 text-left whitespace-nowrap hidden px-3 lg:table-cell dark:border-base-800 dark:bg-white/[.02] ">
+                    Credit Balance
+                </th>
+                <th class="align-middle border-b border-base-200 font-semibold py-2 text-left whitespace-nowrap hidden px-3 lg:table-cell dark:border-base-800 dark:bg-white/[.02] ">
+                    last Login
+                </th>
+            </tr>
+        </thead>
+                    
+        <tbody class="block relative lg:table-row-group">
+            <tr class="data-row  block group first-row border border-base-200 mb-3 rounded-default shadow-xs lg:table-row lg:border-none lg:mb-0 lg:shadow-none dark:border-base-800 relative">
+                <td class="px-3 py-1.5 h-[45px] align-middle flex border-t border-base-200 font-normal gap-4 min-w-0 overflow-hidden text-left before:flex before:capitalize before:content-[attr(data-label)] before:font-semibold before:text-font-important-light dark:before:text-font-important-dark before:items-center before:mr-auto first:border-t-0 lg:group-[.first-row]:border-t-0 lg:before:hidden  lg:table-cell dark:border-base-800 " data-label="profile">
+                    <a class="underline" href="{% url "admin:accounts_user_change" instance.user.id %}">{{ instance.user.full_name }}</a>
+                </td>
+                <td class="px-3 py-1.5 h-[45px] align-middle flex border-t border-base-200 font-normal gap-4 min-w-0 overflow-hidden text-left before:flex before:capitalize before:content-[attr(data-label)] before:font-semibold before:text-font-important-light dark:before:text-font-important-dark before:items-center before:mr-auto first:border-t-0 lg:group-[.first-row]:border-t-0 lg:before:hidden  lg:table-cell dark:border-base-800 " data-label="email">
+                    {{ instance.user.email }}
+                </td>
+                <td class="px-3 py-1.5 h-[45px] align-middle flex border-t border-base-200 font-normal gap-4 min-w-0 overflow-hidden text-left before:flex before:capitalize before:content-[attr(data-label)] before:font-semibold before:text-font-important-light dark:before:text-font-important-dark before:items-center before:mr-auto first:border-t-0 lg:group-[.first-row]:border-t-0 lg:before:hidden  lg:table-cell dark:border-base-800 " data-label="credit balance">
+                    {{ instance.user.credit_balance }}
+                </td>
+                <td class="px-3 py-1.5 h-[45px] align-middle flex border-t border-base-200 font-normal gap-4 min-w-0 overflow-hidden text-left before:flex before:capitalize before:content-[attr(data-label)] before:font-semibold before:text-font-important-light dark:before:text-font-important-dark before:items-center before:mr-auto first:border-t-0 lg:group-[.first-row]:border-t-0 lg:before:hidden  lg:table-cell dark:border-base-800 " data-label="last login">
+                    {{ instance.user.last_login|timesince }} ago
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

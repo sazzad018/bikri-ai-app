@@ -1,0 +1,164 @@
+{% with id=preview_id|default:"1" %}
+<div id="wa-bubble-container-{{ id }}" class="relative max-w-[90%] sm:max-w-[75%] bg-white rounded-[6px] rounded-tl-none text-gray-800 text-[14.2px] flex flex-col select-none">
+    
+    <!-- Top-Left Tail -->
+    <svg class="absolute top-0 -left-1.75 text-white" viewBox="0 0 8 13" height="13" width="8" preserveAspectRatio="xMidYMid meet" version="1.1" x="0px" y="0px" enable-background="new 0 0 8 13"><title>tail-in</title><path fill="currentColor" d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z"></path></svg>
+
+    <!-- Main Content Area -->
+    <div class="p-3 pb-1">
+        {% for comp in components %}
+            <!-- HEADER -->
+            {% if comp.type == 'HEADER' or comp.type == 'header' %}
+                {% if comp.format == 'TEXT' %}
+                    <div data-type="HEADER-TEXT" class="font-bold text-[14.5px] text-gray-900 leading-snug mb-1.5">{{ comp.text }}</div>
+                {% elif comp.format == 'IMAGE' %}
+                    <div class="rounded-lg overflow-hidden bg-gray-50 mb-2 max-h-40 flex items-center justify-center border border-gray-150 relative">
+                        {% if comp.example.header_url.0 %}
+                            <img src="{{ comp.example.header_url.0 }}" alt="Header" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="py-8 px-12 flex flex-col items-center text-gray-400">
+                                <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span class="text-[11px] font-medium">Header Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% elif comp.format == 'VIDEO' %}
+                    <div class="rounded-lg overflow-hidden bg-gray-50 mb-2 max-h-40 flex items-center justify-center border border-gray-150 relative">
+                        <div class="absolute inset-0 bg-black/5 flex items-center justify-center">
+                            <div class="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center shadow-sm">
+                                <svg class="w-4 h-4 text-gray-700 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M4.516 3.484a.5.5 0 01.76-.412l10.828 6.502a.5.5 0 010 .824l-10.828 6.502a.5.5 0 01-.76-.412V3.484z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="py-10 flex flex-col items-center text-gray-400">
+                            <span class="text-[11px] font-medium">Header Video</span>
+                        </div>
+                    </div>
+                {% elif comp.format == 'DOCUMENT' %}
+                    <div class="rounded-lg bg-gray-50 p-2.5 mb-2 flex items-center justify-between border border-gray-100">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="p-1.5 bg-red-50 text-red-500 rounded">
+                                <svg class="w-5.5 h-5.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                            </div>
+                            <div class="text-left leading-tight">
+                                <span class="block text-xs font-semibold text-gray-700 truncate max-w-[150px]">
+                                    {% if comp.example.header_handle.0 %}{{ comp.example.header_handle.0 }}{% else %}document.pdf{% endif %}
+                                </span>
+                                <span class="text-[10px] text-gray-400">PDF Document</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- BODY -->
+            {% if comp.type == 'BODY' or comp.type == 'body' %}
+                <div data-type="BODY" class="text-gray-800 text-[14.2px] break-words whitespace-pre-wrap leading-normal">{{ comp.text }}</div>
+            {% endif %}
+
+            <!-- FOOTER -->
+            {% if comp.type == 'FOOTER' or comp.type == 'footer' %}
+                <div class="text-[11.5px] text-gray-400 mt-1 select-none leading-normal">{{ comp.text }}</div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+    <!-- Dynamic Timestamp -->
+    <div class="px-3 pb-1.5 flex items-center justify-end text-[10px] text-gray-400 select-none space-x-0.5">
+        <span id="wa-time-{{ id }}">12:00 PM</span>
+    </div>
+
+    <!-- BUTTONS -->
+    {% for comp in components %}
+        {% if comp.type == 'BUTTONS' or comp.type == 'buttons' %}
+            <div class="border-t border-gray-100 flex flex-col divide-y divide-gray-100 bg-white rounded-b-2xl overflow-hidden">
+                {% for btn in comp.buttons %}
+                    <div class="w-full py-2.5 text-center text-green-500 font-medium hover:bg-gray-50/60 transition-colors duration-150 flex items-center justify-center space-x-2 text-[13.5px] cursor-pointer">
+                        {% if btn.type == 'PHONE_NUMBER' %}
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        {% elif btn.type == 'URL' %}
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        {% elif btn.type == 'QUICK_REPLY' %}
+                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+                        {% endif %}
+                        <span class="truncate">{{ btn.text }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+</div>
+
+
+<script>
+    (function() {
+        const id = "{{ id }}";
+        const scriptId = id + "-wa-data";
+        const scriptTag = document.getElementById(scriptId);
+        if (!scriptTag) return;
+
+        try {
+            const components = JSON.parse(scriptTag.textContent);
+            const bubble = document.getElementById('wa-bubble-container-' + id);
+            if (!bubble) return;
+
+            // Set dynamic time matching the browser's active clock
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const timeEl = bubble.querySelector('#wa-time-' + id);
+            if (timeEl) timeEl.textContent = `${hours}:${minutes} ${ampm}`;
+
+            // Parse text content and format parameters + markdown
+            components.forEach(comp => {
+                const type = comp.type.toUpperCase();
+
+                if (type === 'BODY') {
+                    const bodyEl = bubble.querySelector('[data-type="BODY"]');
+                    if (bodyEl) {
+                        let text = comp.text || '';
+
+                        // 1. Swap variables with actual examples
+                        if (comp.example && comp.example.body_text && comp.example.body_text[0]) {
+                            const examples = comp.example.body_text[0];
+                            examples.forEach((ex, idx) => {
+                                const placeholder = `{${idx + 1}}`;
+                                text = text.split(placeholder).join(`<span class="bg-gray-100 text-gray-800 px-1 rounded font-mono text-[12.5px] border border-gray-200/60 font-semibold" title="Variable example text">${ex}</span>`);
+                            });
+                        } else {
+                            // Highlighting fallback if examples aren't available
+                            text = text.replace(/\{\{(\d+)\}\}/g, '<span class="bg-amber-50 text-amber-800 px-1 rounded font-mono text-[12.5px] border border-amber-200">$&</span>');
+                        }
+
+                        // 2. Parse basic WhatsApp Markdown elements
+                        // Bold *text*
+                        text = text.replace(/\*(.*?)\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+                        // Italic _text_
+                        text = text.replace(/_(.*?)_/g, '<em class="italic">$1</em>');
+                        // Strikethrough ~text~
+                        text = text.replace(/~(.*?)~/g, '<del class="line-through opacity-80">$1</del>');
+                        // Monospace ```text```
+                        text = text.replace(/```(.*?)```/g, '<code class="bg-gray-50 text-emerald-800 px-1 py-0.5 rounded font-mono text-xs">$1</code>');
+
+                        bodyEl.innerHTML = text;
+                    }
+                } else if (type === 'HEADER' && comp.format === 'TEXT') {
+                    const headerEl = bubble.querySelector('[data-type="HEADER-TEXT"]');
+                    if (headerEl) {
+                        let text = comp.text || '';
+                        if (comp.example && comp.example.header_text && comp.example.header_text[0]) {
+                            text = text.split('{{1}}').join(`<span class="bg-gray-100 text-gray-800 px-1 rounded font-mono text-[12.5px] border border-gray-200/60">${comp.example.header_text[0]}</span>`);
+                        }
+                        headerEl.innerHTML = text;
+                    }
+                }
+            });
+        } catch (err) {
+            console.warn("WhatsApp bubble rendering error: ", err);
+        }
+    })();
+</script>
+{% endwith %}

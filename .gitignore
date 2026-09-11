@@ -1,0 +1,16 @@
+node_modules/
+__pycache__/
+venv/
+trash/
+staticfiles/
+.env
+.todo
+.log
+repo.txt
+db.sqlite3
+/media
+run.sql
+conv.json
+chroma/
+.vscode/
+*.key

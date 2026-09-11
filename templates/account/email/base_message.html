@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load i18n account %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_name }} {% translate "Notification" %}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 40px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <tr>
+            <td style="padding: 20px 24px; background-color: #f8fafc; text-align: center;">
+                <h2 style="margin: 0; color: #FE8C01; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;">Cholbe AI</h2>
+                <p style="margin: 4px 0 0; color: #94a3b8; font-size: 13px; font-weight: 400;">Social media automation</p>
+            </td>
+        </tr>
+        <!-- Content -->
+        <tr>
+            <td style="padding: 28px 24px; color: #334155; font-size: 16px; line-height: 1.7;">
+                <p style="margin-top: 0;">
+                    {% blocktranslate with site_name=current_site.name %}Hello{% endblocktranslate %}{% if user_display %} {{ user_display }}{% elif user %} {{ user.email }}{% endif %}!
+                </p>
+
+                {% block content %}{% endblock content %}
+
+                <p style="margin-top: 30px; margin-bottom: 0; color: #64748b;">
+                    {% translate "Best regards," %}<br>
+                    <strong style="color: #FE8C01;">{% blocktranslate with site_name=current_site.name %}Cholbe AI{% endblocktranslate %}</strong>
+                </p>
+            </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+            <td style="padding: 20px 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 13px;">
+                <p style="margin: 0;">
+                    {% translate "This is an automated message. Please do not reply directly to this email." %}
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
