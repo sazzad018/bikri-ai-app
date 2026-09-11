@@ -252,7 +252,10 @@ FERNET = Fernet(ENCRYPTION_KEY)
 
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
 MAIN_EMAIL = os.environ.get('MAIN_EMAIL')
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+if os.environ.get('MAIN_EMAIL_HOST_PASSWORD'):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -292,7 +295,7 @@ ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_NOTIFICATIONS = True
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-LOGIN_REDIRECT_URL = "/d"
+LOGIN_REDIRECT_URL = "/d/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 if DEBUG:
     ACCOUNT_RATE_LIMITS = False

@@ -8,6 +8,7 @@ from django.urls import re_path
 
 urlpatterns = [
     path('d/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('apps.core.urls')),
     path('accounts/', include('allauth.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
