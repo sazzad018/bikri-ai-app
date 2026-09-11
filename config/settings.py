@@ -153,6 +153,8 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+import urllib.parse as urlparse
+
 if DEBUG:
     DATABASES = {
         'default': {
@@ -161,17 +163,40 @@ if DEBUG:
         }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-            'CONN_MAX_AGE': 60,
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        urlparse.uses_netloc.append('postgres')
+        urlparse.uses_netloc.append('postgresql')
+        url = urlparse.urlparse(db_url)
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': url.path[1:],
+                'USER': url.username,
+                'PASSWORD': url.password,
+                'HOST': url.hostname,
+                'PORT': url.port or 5432,
+                'CONN_MAX_AGE': 60,
+                'OPTIONS': {
+                    'sslmode': 'require',
+                },
+            }
         }
-    }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME'),
+                'USER': os.environ.get('DB_USER'),
+                'PASSWORD': os.environ.get('DB_PASSWORD'),
+                'HOST': os.environ.get('DB_HOST'),
+                'PORT': os.environ.get('DB_PORT', 5432),
+                'CONN_MAX_AGE': 60,
+                'OPTIONS': {
+                    'sslmode': os.environ.get('DB_SSLMODE', 'require'),
+                },
+            }
+        }
 
 
 AUTH_PASSWORD_VALIDATORS = [
