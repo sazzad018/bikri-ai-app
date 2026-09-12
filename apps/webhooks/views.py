@@ -87,6 +87,14 @@ class Mixin():
             system_prompt = business_profile.knowledge or business_profile.get_system_prompt() or site_config.default_system_prompt or settings.DEFAULT_SYSTEM_PROMPT
             api_key = business_profile.get_api_key()
             ai_model = business_profile.ai_model or site_config.default_ai_model or settings.DEFAULT_AI_MODEL
+            deprecated_or_invalid_models = [
+                'google/gemini-2.0-flash-exp:free',
+                'google/gemini-3.1-flash-lite',
+                'google/gemini-2.0-flash-exp',
+            ]
+            if not ai_model or ai_model in deprecated_or_invalid_models:
+                ai_model = 'google/gemma-4-31b-it:free'
+
             if not api_key:
                 logger.error(f"Cannot initialize AI Agent: No OpenRouter API key found for business profile {business_profile.id}")
                 return True
@@ -258,7 +266,16 @@ class Mixin():
                 reply = agent.ask(prompt, media=media)
                 logger.info(reply)
             except Exception as e:
-                logger.exception(e)
+                logger.exception(f"AI generation failed for model {ai_model}: {e}")
+                if "404" in str(e) or "No endpoints found" in str(e):
+                    fallback_model = "google/gemma-4-26b-a4b-it:free" if ai_model != "google/gemma-4-26b-a4b-it:free" else "google/gemma-4-31b-it:free"
+                    logger.info(f"Retrying with fallback model: {fallback_model}")
+                    try:
+                        agent.backend.model = fallback_model
+                        reply = agent.ask(prompt, media=media)
+                        logger.info(f"Fallback model succeeded: {reply}")
+                    except Exception as fb_err:
+                        logger.exception(f"Fallback model also failed: {fb_err}")
             if reply:
                 text, response_json = parse_ai_response(reply)
                 logger.info(text)
