@@ -93,7 +93,7 @@ class Mixin():
                 'google/gemini-2.0-flash-exp',
             ]
             if not ai_model or ai_model in deprecated_or_invalid_models:
-                ai_model = 'google/gemma-4-31b-it:free'
+                ai_model = 'nvidia/nemotron-3.5-lightning:free'
 
             if not api_key:
                 logger.error(f"Cannot initialize AI Agent: No OpenRouter API key found for business profile {business_profile.id}")
@@ -261,21 +261,22 @@ class Mixin():
                 
             logger.info(prompt)
             #ask
+            models_to_try = []
+            for m in [ai_model, 'nvidia/nemotron-3.5-lightning:free', 'google/gemma-4-26b-a4b-it:free', 'google/gemma-4-31b-it:free']:
+                if m and m not in models_to_try:
+                    models_to_try.append(m)
+
             reply = None
-            try:
-                reply = agent.ask(prompt, media=media)
-                logger.info(reply)
-            except Exception as e:
-                logger.exception(f"AI generation failed for model {ai_model}: {e}")
-                if "404" in str(e) or "No endpoints found" in str(e):
-                    fallback_model = "google/gemma-4-26b-a4b-it:free" if ai_model != "google/gemma-4-26b-a4b-it:free" else "google/gemma-4-31b-it:free"
-                    logger.info(f"Retrying with fallback model: {fallback_model}")
-                    try:
-                        agent.backend.model = fallback_model
-                        reply = agent.ask(prompt, media=media)
-                        logger.info(f"Fallback model succeeded: {reply}")
-                    except Exception as fb_err:
-                        logger.exception(f"Fallback model also failed: {fb_err}")
+            for current_model in models_to_try:
+                try:
+                    agent.backend.model = current_model
+                    reply = agent.ask(prompt, media=media)
+                    if reply:
+                        logger.info(f"Model {current_model} succeeded: {reply}")
+                        break
+                except Exception as e:
+                    logger.warning(f"Model {current_model} failed ({e}). Trying next model in list...")
+                    continue
             if reply:
                 text, response_json = parse_ai_response(reply)
                 logger.info(text)
