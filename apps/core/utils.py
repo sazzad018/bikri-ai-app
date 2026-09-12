@@ -66,6 +66,12 @@ def parse_ai_response(response: str):
     except dirtyjson.Error:
         response_json = {}
 
+    if not text:
+        if isinstance(response_json, dict):
+            text = response_json.get("message") or response_json.get("reply") or response_json.get("text") or response.strip()
+        else:
+            text = response.strip()
+
     return text, response_json
 
 def image_html(url, alt=None, size=28):

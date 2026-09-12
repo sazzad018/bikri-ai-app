@@ -22,6 +22,11 @@ if admin_email and admin_password:
         user.save()
         print(f"==> Superuser already exists. Credentials updated for: {admin_email}")
 
+    if user.credit_balance < 100:
+        user.credit_balance = 1000
+        user.save(update_fields=['credit_balance'])
+        print(f"==> Allocated 1000 testing credits for: {admin_email}")
+
     try:
         from allauth.account.models import EmailAddress
         email_obj, _ = EmailAddress.objects.get_or_create(

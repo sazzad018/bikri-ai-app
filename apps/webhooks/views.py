@@ -83,13 +83,18 @@ class Mixin():
             )
 
             # initialize agent
-            system_prompt=business_profile.knowledge
-            api_key = business_profile.openrouter_api_key or settings.OPENROUTER_API_KEY
+            site_config = SiteConfig.get_solo()
+            system_prompt = business_profile.knowledge or business_profile.get_system_prompt() or site_config.default_system_prompt or settings.DEFAULT_SYSTEM_PROMPT
+            api_key = business_profile.get_api_key()
+            ai_model = business_profile.ai_model or site_config.default_ai_model or settings.DEFAULT_AI_MODEL
+            if not api_key:
+                logger.error(f"Cannot initialize AI Agent: No OpenRouter API key found for business profile {business_profile.id}")
+                return True
             agent = Agent(
                 backend=OpenAIBackend(
                     base_url=settings.OPENROUTER_BASE_URL,
                     api_key=api_key,
-                    model=business_profile.ai_model,
+                    model=ai_model,
                 ),
             )
             if conversation.json:
@@ -281,8 +286,9 @@ class Mixin():
                             if last_two[0].get("content") == last_two[1].get("content"):
                                 history_data.remove(last_two[0])
                                 conversation.json = history_data
-                    business_profile.user.use_credit(business_profile.credit_per_reply, reason="ai_reply")
-                    conversation.message_credit_used += business_profile.credit_per_reply
+                    if business_profile.user.has_credit(business_profile.credit_per_reply):
+                        business_profile.user.use_credit(business_profile.credit_per_reply, reason="ai_reply")
+                        conversation.message_credit_used += business_profile.credit_per_reply
                     conversation.save()
 
 

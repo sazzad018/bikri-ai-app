@@ -171,8 +171,8 @@ class BusinessProfile(BaseModel):
         if not self.reply_enabled:
             return False, "reply disabled"
         else:
-            # check if user has credit
-            if self.user.has_credit(self.credit_per_reply):
+            # check if user has credit (allow superuser to test)
+            if self.user.is_superuser or self.user.has_credit(self.credit_per_reply):
                 return True, ""
             else:
                 return False, "insufficient credits"

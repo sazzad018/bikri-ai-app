@@ -268,7 +268,7 @@ with open(BASE_DIR / 'config/default_system_prompt.txt') as f:
     DEFAULT_SYSTEM_PROMPT = f.read()
 with open(BASE_DIR / 'config/default_business_info.txt') as f:
     DEFAULT_BUSINESS_INFO = f.read()
-DEFAULT_AI_MODEL = 'google/gemini-3.1-flash-lite'
+DEFAULT_AI_MODEL = 'google/gemini-2.0-flash-exp:free'
 OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
 GOOGLE_TAG_MANAGER_ID = os.environ.get('GOOGLE_TAG_MANAGER_ID', '')
